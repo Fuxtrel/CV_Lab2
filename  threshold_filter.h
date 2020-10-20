@@ -16,19 +16,34 @@ class BinaryThreshold
 {
 
 public:
-    BinaryThreshold();
-    ~BinaryThreshold();
-    void useFilter();
+    BinaryThreshold() = default;
+
+    ~BinaryThreshold() = default;
+
+    void read(string path);
+
+    void print(size_t index, string &flow);
+
+
+    size_t size();
+
+    Mat getImage(size_t index);
+
+    enum FilterTypes
+    {
+        BINARY_FILTER,
+        BINARY_FILTER_INV
+    };
+
+    BinaryThreshold(BinaryThreshold &base, FilterTypes filterName);
+
+    Mat applyFilterToImage(size_t index, FilterTypes filterName);
+
 
 private:
-    const string m_filter1;
-    const string m_filter2;
-    vector<string> imgName;
+    Mat applyBinaryFilterToImg(size_t index, int threshold, int maxValue, string &filterName);
+
     vector<Mat> image;
-    vector<Mat> copy_image;
-
-    void applyFilterToImg(Mat &img, int threshold, int maxValue, string filterName);
-
 
 };
 
