@@ -22,10 +22,7 @@ public:
 
     void read(string path);
 
-    void print(size_t index, string &flow);
-
-
-    size_t size();
+    void print(size_t imgNumber, const string &name);
 
     Mat getImage(size_t index);
 
@@ -35,13 +32,15 @@ public:
         BINARY_FILTER_INV
     };
 
-    BinaryThreshold(BinaryThreshold &base, FilterTypes filterName);
+    int getSize();
 
-    Mat applyFilterToImage(size_t index, FilterTypes filterName);
+    BinaryThreshold(BinaryThreshold &base);
+
+    void applyFilterToImage(size_t index, FilterTypes filterName);
 
 
 private:
-    Mat applyBinaryFilterToImg(size_t index, int threshold, int maxValue, string &filterName);
+    void applyBinaryFilterToImg(Mat imageBase, int threshold, int maxValue, string &filterName);
 
     vector<Mat> image;
 

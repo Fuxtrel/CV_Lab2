@@ -1,69 +1,88 @@
 #include " threshold_filter.h"
+#include <exception>
 
 //бинарный фильтр
-Mat BinaryThreshold::applyBinaryFilterToImg(size_t index, int threshold, int maxValue, string &filterName)
+void BinaryThreshold::applyBinaryFilterToImg(Mat imageBase, int threshold, int maxValue, string &filterName)
 {
-    Mat img = image[index].clone();
-    string m_filter1 = "B";
-    string m_filter2 = "BI";
     int minValue;
-    if (filterName == m_filter1)
+    if (filterName == "B")
     {
         minValue = 0;
-    } else if (filterName == m_filter2)
+    } else if (filterName == "BI")
     {
         minValue = maxValue;
         maxValue = 0;
-    } else exit(0);
-
-    for (int i = 0; i < img.rows; i++)
+    }
+    for (int i = 0; i < imageBase.rows; i++)
     {
-        for (int j = 0; j < img.cols; j++)
+        for (int j = 0; j < imageBase.cols; j++)
         {
-            if ((img.at<uint8_t>(i, j) <= threshold) && (img.at<uint8_t>(i, j) <= threshold) &&
-                (img.at<uint8_t>(i, j) <= threshold))
+            switch(imageBase.channels())
             {
-                img.at<uint8_t>(i, j) = minValue;
-                img.at<uint8_t>(i, j) = minValue;
-                img.at<uint8_t>(i, j) = minValue;
-            } else
-            {
-                img.at<uint8_t>(i, j) = maxValue;
-                img.at<uint8_t>(i, j) = maxValue;
-                img.at<uint8_t>(i, j) = maxValue;
-            }
+                case 3 :
+                    if ((imageBase.at<Vec3b>(i, j)[0] <= threshold) || (imageBase.at<Vec3b>(i, j)[1] <= threshold) ||
+                        (imageBase.at<Vec3b>(i, j)[2] <= threshold))
+                    {
+                        imageBase.at<Vec3b>(i, j)[0] = minValue;
+                        imageBase.at<Vec3b>(i, j)[1] = minValue;
+                        imageBase.at<Vec3b>(i, j)[2] = minValue;
+                    } else
+                    {
+                        imageBase.at<Vec3b>(i, j)[0] = maxValue;
+                        imageBase.at<Vec3b>(i, j)[1] = maxValue;
+                        imageBase.at<Vec3b>(i, j)[2] = maxValue;
+                    }
+                    break;
+                case 2:
+                    if ((imageBase.at<Vec2b>(i, j)[0] <= threshold) || (imageBase.at<Vec2b>(i, j)[1] <= threshold))
+                    {
+                        imageBase.at<Vec2b>(i, j)[0] = minValue;
+                        imageBase.at<Vec2b>(i, j)[1] = minValue;
+                        
+                    } else
+                    {
+                        imageBase.at<Vec2b>(i, j)[0] = maxValue;
+                        imageBase.at<Vec2b>(i, j)[1] = maxValue;
+                    }
+                    break;
+                case 1:
+                    if ((imageBase.at<uint8_t>(i, j) <= threshold))
+                    {
+                        imageBase.at<uint8_t>(i, j) = minValue;
 
+                    } else
+                    {
+                        imageBase.at<uint8_t>(i, j)= maxValue;
+                    }
+                    break;
+            }
         }
     }
-    return img;
 }
-
+//Считываем данные в вектора
 void BinaryThreshold::read(string path)
 {
     vector<string> imgName;
     glob(path, imgName);
-    for (int i = 0; i < imgName.size(); i++)
+    for (size_t i = 0; i < imgName.size(); i++)
     {
-        image.push_back(imread(imgName[i], ImreadModes::IMREAD_GRAYSCALE));
+        image.push_back(imread(imgName[i]));
     }
 }
 
-void BinaryThreshold::print(size_t index, string &flow)
+//Выод на экран
+void BinaryThreshold::print(size_t imgNumber, const string &name)
 {
-    imshow("img1", image[index]);
-   // while (waitKey(1) != 'c');
+    imshow(name, image[imgNumber]);
+    while (waitKey(1) != 'c');
 }
 
-size_t BinaryThreshold::size()
+//Копия изображений для применения фильтров
+BinaryThreshold::BinaryThreshold(BinaryThreshold &baseImagesSets)
 {
-    return image.size();
-}
-
-BinaryThreshold::BinaryThreshold(BinaryThreshold &base, FilterTypes filterName)
-{
-    for (size_t i = 0; i < base.size(); i++)
+    for (size_t i = 0; i < baseImagesSets.image.size(); i++)
     {
-        image.push_back(std::move(base.applyFilterToImage(i, filterName)));
+        image.push_back(baseImagesSets.image[i].clone());
     }
 }
 
@@ -72,7 +91,7 @@ Mat BinaryThreshold::getImage(size_t index)
     return image[index];
 }
 
-Mat BinaryThreshold::applyFilterToImage(size_t index, FilterTypes filterName)
+void BinaryThreshold::applyFilterToImage(size_t index, FilterTypes filterName)
 {
     switch (filterName)
     {
@@ -81,16 +100,23 @@ Mat BinaryThreshold::applyFilterToImage(size_t index, FilterTypes filterName)
             int threshold = 125;
             int maxValue = 255;
             string filter = "B";
-            return applyBinaryFilterToImg(index, threshold, maxValue, filter);
+            return applyBinaryFilterToImg(image[index], threshold, maxValue, filter);
         }
         case BINARY_FILTER_INV:
         {
             int threshold = 125;
             int maxValue = 255;
             string filter = "BI";
-            return applyBinaryFilterToImg(index, threshold, maxValue, filter);
+            return applyBinaryFilterToImg(image[index], threshold, maxValue, filter);
         }
     }
 }
+
+int BinaryThreshold::getSize()
+{
+    return image.size();
+}
+
+
 
 

@@ -3,28 +3,34 @@
 
 int main()
 {
-
-    string before = "image before";
-    string after1 = "image after1";
-    string after2 = "image after2";
-    BinaryThreshold thr;
     string folderPath = "/home/alex/CLionProjects/CV_Lab2/Images/*.jpg";
-    thr.read(folderPath);
-    BinaryThreshold filteredThr(thr, BinaryThreshold::BINARY_FILTER);
-    BinaryThreshold filteredThrInv(thr, BinaryThreshold::BINARY_FILTER_INV);
+    const string before = "reference sample";
+    const string after = "filtered sample";
+
+    BinaryThreshold referenceSample;
+    referenceSample.read(folderPath);
+
+    BinaryThreshold workImages_ThrBin(referenceSample);
+    BinaryThreshold workImages_ThrBinInv(referenceSample);
+
+
     uint32_t startTime = clock();
-    for (size_t i = 0; i < thr.size(); i++)
+    for (size_t i = 0; i < referenceSample.getSize(); i++)
     {
-       //thr.print(i, before);
-        filteredThr.print(i, after1);
-        //filteredThrInv.print(i, after2);
+        referenceSample.print(i, before);
+
+        workImages_ThrBin.applyFilterToImage(i, BinaryThreshold::BINARY_FILTER);
+        workImages_ThrBin.print(i, after);
+
+        workImages_ThrBinInv.applyFilterToImage(i, BinaryThreshold::BINARY_FILTER_INV);
+        workImages_ThrBinInv.print(i, after);
     }
     uint32_t endTime = clock();
     cout << double(endTime - startTime) / CLOCKS_PER_SEC << endl;
     startTime = clock();
-    for(size_t i = 0; i < thr.size(); i++){
+    for(size_t i = 0; i < referenceSample.getSize(); i++){
         Mat show;
-        cv::threshold(thr.getImage(i), show, 125, 255, THRESH_BINARY);
+        cv::threshold(referenceSample.getImage(i), show, 125, 255, THRESH_BINARY);
         imshow("WINDOW", show);
     }
     endTime = clock();
