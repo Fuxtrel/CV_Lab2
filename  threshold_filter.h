@@ -32,8 +32,6 @@ public:
         BINARY_FILTER_INV
     };
 
-    int getSize();
-
     BinaryThreshold(BinaryThreshold &base);
 
     void applyFilterToImage(size_t index, FilterTypes filterName);

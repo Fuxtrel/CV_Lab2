@@ -113,11 +113,6 @@ void BinaryThreshold::applyFilterToImage(size_t index, FilterTypes filterName)
     }
 }
 
-int BinaryThreshold::getSize()
-{
-    return image.size();
-}
-
 int BinaryThreshold::getDifference(Mat &original, size_t index)
 {
     uint differenceCounter = 0;
