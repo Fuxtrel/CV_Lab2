@@ -3,7 +3,7 @@
 
 int main()
 {
-    string folderPath = "/home/alex/CLionProjects/CV_Lab2/Images/*.jpg";
+    string folderPath = "/home/alex/CLionProjects/CV_Lab2/Images/*.jpeg";
     const string before = "reference sample";
     const string after = "filtered sample";
 
@@ -15,24 +15,26 @@ int main()
 
 
     uint32_t startTime = clock();
-    for (size_t i = 0; i < referenceSample.getSize(); i++)
-    {
-        referenceSample.print(i, before);
 
-        workImages_ThrBin.applyFilterToImage(i, BinaryThreshold::BINARY_FILTER);
-        workImages_ThrBin.print(i, after);
+    //referenceSample.print(0, before);
 
-        workImages_ThrBinInv.applyFilterToImage(i, BinaryThreshold::BINARY_FILTER_INV);
-        workImages_ThrBinInv.print(i, after);
-    }
+    workImages_ThrBin.applyFilterToImage(0, BinaryThreshold::BINARY_FILTER);
+    //workImages_ThrBin.print(0, after);
+
+    //workImages_ThrBinInv.applyFilterToImage(0, BinaryThreshold::BINARY_FILTER_INV);
+    //workImages_ThrBinInv.print(0, after);
+
     uint32_t endTime = clock();
     cout << double(endTime - startTime) / CLOCKS_PER_SEC << endl;
-    startTime = clock();
-    for(size_t i = 0; i < referenceSample.getSize(); i++){
-        Mat show;
-        cv::threshold(referenceSample.getImage(i), show, 125, 255, THRESH_BINARY);
-        imshow("WINDOW", show);
-    }
-    endTime = clock();
-    cout << double(endTime - startTime) / CLOCKS_PER_SEC;
+
+    uint32_t startTime1 = clock();
+
+    Mat show;
+    cv::threshold(referenceSample.getImage(0), show, 125, 255, THRESH_BINARY);
+    //imshow("WINDOW", show);
+
+    uint32_t endTime1 = clock();
+    cout << double(endTime1 - startTime1) / CLOCKS_PER_SEC << endl;
+
+    std::cout << "Difference " << workImages_ThrBin.getDifference(show, 0);
 }

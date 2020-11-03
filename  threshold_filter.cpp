@@ -17,7 +17,7 @@ void BinaryThreshold::applyBinaryFilterToImg(Mat imageBase, int threshold, int m
     {
         for (int j = 0; j < imageBase.cols; j++)
         {
-            switch(imageBase.channels())
+            switch (imageBase.channels())
             {
                 case 3 :
                     if ((imageBase.at<Vec3b>(i, j)[0] <= threshold) || (imageBase.at<Vec3b>(i, j)[1] <= threshold) ||
@@ -38,7 +38,7 @@ void BinaryThreshold::applyBinaryFilterToImg(Mat imageBase, int threshold, int m
                     {
                         imageBase.at<Vec2b>(i, j)[0] = minValue;
                         imageBase.at<Vec2b>(i, j)[1] = minValue;
-                        
+
                     } else
                     {
                         imageBase.at<Vec2b>(i, j)[0] = maxValue;
@@ -52,13 +52,14 @@ void BinaryThreshold::applyBinaryFilterToImg(Mat imageBase, int threshold, int m
 
                     } else
                     {
-                        imageBase.at<uint8_t>(i, j)= maxValue;
+                        imageBase.at<uint8_t>(i, j) = maxValue;
                     }
                     break;
             }
         }
     }
 }
+
 //Считываем данные в вектора
 void BinaryThreshold::read(string path)
 {
@@ -115,6 +116,22 @@ void BinaryThreshold::applyFilterToImage(size_t index, FilterTypes filterName)
 int BinaryThreshold::getSize()
 {
     return image.size();
+}
+
+int BinaryThreshold::getDifference(Mat &original, size_t index)
+{
+    uint differenceCounter = 0;
+    for (int i = 0; i < image[index].rows; i++)
+    {
+        for (int j = 0; j < image[index].cols; j++)
+        {
+            if ((abs(image[index].at<uint8_t>(i,j) - original.at<uint8_t>(i,j))) != 0)
+            {
+                differenceCounter++;
+            }
+        }
+    }
+    return (double)differenceCounter / (image[index].rows * image[index].cols);
 }
 
 

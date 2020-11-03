@@ -38,6 +38,8 @@ public:
 
     void applyFilterToImage(size_t index, FilterTypes filterName);
 
+    int getDifference(Mat &original, size_t index);
+
 
 private:
     void applyBinaryFilterToImg(Mat imageBase, int threshold, int maxValue, string &filterName);
